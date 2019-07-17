@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import "./App.css";
 // STEP 4 - import the button and display components
 // Don't forget to import any extra css/scss files you build into the correct component
@@ -7,7 +7,7 @@ import "./App.css";
 import Logo from "./components/DisplayComponents/Logo";
 import Display from "./components/DisplayComponents/Display";
 import Numbers from "./components/ButtonComponents/NumberButtons/Numbers";
-// import Operators from "./components/ButtonComponents/OperatorButtons/Operators";
+import Operators from "./components/ButtonComponents/OperatorButtons/Operators";
 import Specials from "./components/ButtonComponents/SpecialButtons/Specials";
 
 function App() {
@@ -16,12 +16,75 @@ function App() {
   // Your functions should accept a parameter of the the item data being displayed to the DOM (ie - should recieve 5 if the user clicks on
   // the "5" button, or the operator if they click one of those buttons) and then call your setter function to update state.
   // Don't forget to pass the functions (and any additional data needed) to the components as props
+  const [firstValue, setFirstValue] = useState('0');
+  const [operator, setOperator] = useState('');
+  const [secondValue, setSecondValue] = useState('0');
   
+  const numbersHandler = value => {
+    if(secondValue==='0') {setSecondValue(value)} else {setSecondValue(secondValue+value)}
+  };
+
+  const operatorHandler = value => {
+    if(value==='=') {
+      const first = parseFloat(firstValue);
+      const second = parseFloat(secondValue);
+      switch(operator) {
+        case '/':
+          setFirstValue('0');
+          setOperator('');
+          setSecondValue((first/second).toString());
+          break;
+        case '*':
+          setFirstValue('0');
+          setOperator('');
+          setSecondValue((first*second).toString());
+          break;
+        case '+':
+          setFirstValue('0');
+          setOperator('');
+          setSecondValue((first+second).toString());
+          break;
+        case '-':
+          setFirstValue('0');
+          setOperator('');
+          setSecondValue((first-second).toString());
+          break;
+        default:
+          break;
+      }
+    } else {
+      setFirstValue(secondValue);
+      setSecondValue('0');
+      setOperator(value);
+    }
+  };
+
+  const specialHandler = value => {
+    const second = parseFloat(secondValue);
+    switch(value) {
+      case 'C':
+        setSecondValue('0');
+        break;
+      case '+/-':
+        setSecondValue((-second).toString());
+        break;
+      case '%':
+        setSecondValue((second/100).toString());
+        break;
+      default:
+        break;
+    }
+  }
+
   return (
     <div className="container">
       <Logo />
       <div className="App">
-        <Display value="0"/>
+        <Display value={secondValue}/>
+        <Specials handler={specialHandler}/>
+        <Numbers handler={numbersHandler}/>
+        <Operators handler={operatorHandler}/>
+
         {/* STEP 4 - Render your components here and be sure to properly import/export all files */}
       </div>
     </div>
